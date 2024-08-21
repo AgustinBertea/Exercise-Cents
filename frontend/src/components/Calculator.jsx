@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Axios from "axios";
+import axios from "axios";
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 
 const Calculator = () => {
-  const [num1, setNum1] = useState('');
-  const [num2, setNum2] = useState('');
+  const [firstNumber, setFirstNumber] = useState('');
+  const [secondNumber, setSecondNumber] = useState('');
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -16,13 +16,15 @@ const Calculator = () => {
     setResult(null);
 
     try {
-      const response = await Axios.post('localhost:8080/api/v1/calculate', {
-         "firstNumber": num1,
-         "secondNumber": num2
-       });
-      setResult(response.data.result);
+      const response = await axios.post('http://localhost:8080/api/v1/calculate', null, {
+        params: {
+          firstNumber: parseFloat(firstNumber),
+          secondNumber: parseFloat(secondNumber)
+        }
+      });
+      setResult(response.data);
     } catch (error) {
-      setError('The following error has occurred: ' + error.response.data );
+      setError('The following error has occurred: ' + error.response.data.errorMessage);
     } finally {
       setLoading(false);
     }
@@ -32,26 +34,26 @@ const Calculator = () => {
     <Container className="mt-5">
       <h1>Calculator</h1>
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formNum1">
+        <Form.Group controlId="formFirstNumber">
           <Form.Label>First number</Form.Label>
           <Form.Control
             type="number"
-            value={num1}
-            onChange={(e) => setNum1(e.target.value)}
+            value={firstNumber}
+            onChange={(e) => setFirstNumber(e.target.value)}
             required
           />
         </Form.Group>
-        <Form.Group controlId="formNum2">
+        <Form.Group controlId="formSecondNumber">
           <Form.Label>Second number</Form.Label>
           <Form.Control
             type="number"
-            value={num2}
-            onChange={(e) => setNum2(e.target.value)}
+            value={secondNumber}
+            onChange={(e) => setSecondNumber(e.target.value)}
             required
           />
         </Form.Group>
         <Button variant="primary" type="submit" disabled={loading}>
-          {loading ? 'Sending...' : 'Enviar'}
+          {loading ? 'Sending...' : 'Send'}
         </Button>
       </Form>
       {result !== null && (
