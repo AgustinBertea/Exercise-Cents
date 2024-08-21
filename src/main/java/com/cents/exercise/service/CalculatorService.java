@@ -1,14 +1,20 @@
 package com.cents.exercise.service;
 
+import com.cents.exercise.exception.CalculatorException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CalculatorService {
 
     public double calculate(Double firstNumber, Double secondNumber) {
-        // Find the largest number and pass it as a parameter to the helper method to find the next prime number
-        int nextPrime = getNextPrime(Math.max(firstNumber, secondNumber));
-        return firstNumber + secondNumber + nextPrime;
+        try {
+            // Find the largest number and pass it as a parameter to the helper method to find the next prime number
+            int nextPrime = getNextPrime(Math.max(firstNumber, secondNumber));
+            return firstNumber + secondNumber + nextPrime;
+        } catch (Exception ex) {
+            throw new CalculatorException("An error occurred while attempting to operate on the numbers, reason: "
+                    + ex.getMessage());
+        }
     }
 
     private int getNextPrime(Double number) {
